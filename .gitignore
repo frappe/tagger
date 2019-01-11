@@ -3,4 +3,4 @@
 __pycache__
 tagger.ini
 config.json
-nginx.conf
+tagger_nginx.conf
