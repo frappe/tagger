@@ -14,7 +14,20 @@ def tagger():
 	authenticate_request()
 
 	payload = request.get_json()
-	if payload.get('context') == 'ci/circleci':
+
+	if payload.get('context') == 'Semantic Pull Request':
+		if payload.get("state") == "pending":
+			add_label_to_pr(payload, "needs-semantic-title")
+		else:
+			remove_label_from_pr(payload, "needs-semantic-title")
+
+	elif payload.get('context') == 'continuous-integration/travis-ci/pr':
+		if payload.get("state") == "error":
+			add_label_to_pr(payload, "travis-failing")
+		else:
+			remove_label_from_pr(payload, "travis-failing")
+
+	elif payload.get('context') == 'ci/circleci':
 		if payload.get("state") == "error":
 			add_label_to_pr(payload, "circleci-failed")
 		else:
