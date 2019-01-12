@@ -15,23 +15,33 @@ def tagger():
 
 	payload = request.get_json()
 
+	# Semantic PRs - Label if pending
 	if payload.get('context') == 'Semantic Pull Request':
 		if payload.get("state") == "pending":
 			add_label_to_pr(payload, "needs-semantic-title")
 		else:
 			remove_label_from_pr(payload, "needs-semantic-title")
 
+	# Codacy - Label if failed
+	if payload.get('context') == 'Codacy/PR Quality Review':
+		if payload.get("state") == "failure":
+			add_label_to_pr(payload, "review-codacy")
+		else:
+			remove_label_from_pr(payload, "review-codacy")
+
+	# Travis CI - Label if errored or failed
 	elif payload.get('context') == 'continuous-integration/travis-ci/pr':
-		if payload.get("state") == "error":
+		if payload.get("state") in ["error", "failure"]:
 			add_label_to_pr(payload, "travis-failing")
 		else:
 			remove_label_from_pr(payload, "travis-failing")
 
+	# CicleCI - Label if errored or failed
 	elif payload.get('context') == 'ci/circleci':
-		if payload.get("state") == "error":
-			add_label_to_pr(payload, "circleci-failed")
+		if payload.get("state") in ["error", "failure"]:
+			add_label_to_pr(payload, "circleci-failing")
 		else:
-			remove_label_from_pr(payload, "circleci-failed")
+			remove_label_from_pr(payload, "circleci-failing")
 
 	return json.dumps({'status': 'done'})
 
