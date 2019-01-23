@@ -23,7 +23,7 @@ def tagger():
 			remove_label_from_pr(payload, "needs-semantic-title")
 
 	# Codacy - Label if failed
-	if payload.get('context') == 'Codacy/PR Quality Review':
+	elif payload.get('context') == 'Codacy/PR Quality Review':
 		if payload.get("state") == "failure":
 			add_label_to_pr(payload, "review-codacy")
 		else:
