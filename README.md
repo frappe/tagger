@@ -1,7 +1,10 @@
 # tagger
 A simple Flask app to automatically label GitHub PRs.
 
+
 ---
+
+
 ### Creating a webhook:
 1. Set Payload URL to your intended server (e.g. `http://123.231.123.231:8000`).
 2. Set Content Type to `application/json`.
@@ -12,12 +15,12 @@ A simple Flask app to automatically label GitHub PRs.
 
 ---
 
+
 ### Setting up a local environment:
 
 1. Clone this repository in your desired location:
 ```
 git clone https://github.com/erpnext/tagger
-
 ```
 
 2. Change working directory:
@@ -51,3 +54,9 @@ pip install -r requirements.txt
 export FLASK_APP=tagger
 flask run -h 0.0.0.0 -p 8000 --reload --debugger
 ```
+
+--- 
+### Setting up a server to listen to webhook events:
+
+1. Follow steps (1 - 6) in the section titled `Setting up a local environment`.
+2. If you choose to use Ubuntu 18.04 LTS, uWSGI and Nginx for your purposes, [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04) is recommended.
