@@ -17,31 +17,31 @@ def tagger():
 
 	# Semantic PRs - Label if pending
 	if payload.get('context') == 'Semantic Pull Request':
-		if payload.get("state") == "pending":
-			add_label_to_pr(payload, "needs-semantic-title")
+		if payload.get('state') == 'pending':
+			add_label_to_pr(payload, 'needs-semantic-title')
 		else:
-			remove_label_from_pr(payload, "needs-semantic-title")
+			remove_label_from_pr(payload, 'needs-semantic-title')
 
-	# Codacy - Label if failed
+	# Codacy - Label if failed, remove if success
 	elif payload.get('context') == 'Codacy/PR Quality Review':
-		if payload.get("state") == "failure":
-			add_label_to_pr(payload, "review-codacy")
-		else:
-			remove_label_from_pr(payload, "review-codacy")
+		if payload.get('state') == 'failure':
+			add_label_to_pr(payload, 'review-codacy')
+		elif payload.get('state') == 'success':
+			remove_label_from_pr(payload, 'review-codacy')
 
-	# Travis CI - Label if errored or failed
+	# Travis CI - Label if errored or failed, remove if success
 	elif payload.get('context') == 'continuous-integration/travis-ci/pr':
-		if payload.get("state") in ["error", "failure"]:
-			add_label_to_pr(payload, "travis-failing")
-		else:
-			remove_label_from_pr(payload, "travis-failing")
+		if payload.get('state') in ['error', 'failure']:
+			add_label_to_pr(payload, 'travis-failing')
+		elif payload.get('state') == 'success':
+			remove_label_from_pr(payload, 'travis-failing')
 
-	# CicleCI - Label if errored or failed
+	# CicleCI - Label if errored or failed, remove if success
 	elif payload.get('context') == 'ci/circleci':
-		if payload.get("state") in ["error", "failure"]:
-			add_label_to_pr(payload, "circleci-failing")
-		else:
-			remove_label_from_pr(payload, "circleci-failing")
+		if payload.get('state') in ['error', 'failure']:
+			add_label_to_pr(payload, 'circleci-failing')
+		elif payload.get('state') == 'success':
+			remove_label_from_pr(payload, 'circleci-failing')
 
 	return json.dumps({'status': 'done'})
 
