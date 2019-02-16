@@ -58,5 +58,5 @@ flask run -h 0.0.0.0 -p 8000 --reload --debugger
 --- 
 ### Setting up a server to listen to webhook events:
 
-1. Follow steps (1 - 6) in the section titled `Setting up a local environment`.
+1. Follow steps 1 - 6 in the section titled `Setting up a local environment`.
 2. If you choose to use Ubuntu 18.04 LTS, uWSGI and Nginx for your purposes, [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04) is recommended.
