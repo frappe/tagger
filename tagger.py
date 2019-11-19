@@ -15,6 +15,25 @@ def tagger():
 
 	payload = request.get_json()
 
+	# docs-required status check
+	if not payload.get('context'):
+		repo = get_repo(payload)
+		head_sha = payload.get('pull_request', {}).get('head', {}).get('sha', None)
+		title = payload.get('pull_request', {}).get('title', '')
+		body = payload.get('pull_request', {}).get('body', '')
+		if title.startswith('feat:') and head_sha:
+			status = 'pending'
+			description = 'Documentation required'
+			if 'Docs Link' in body or 'Documentation Link' in body or 'Documentation PR' in body:
+				status = 'success'
+				description = 'Documentation link added'
+			repo.get_commit(head_sha).create_status(
+				status,
+				target_url="https://github.com/frappe/erpnext/wiki/Updating-Documentation",
+				description=description,
+				context="docs-required"
+			)
+
 	# Semantic PRs - Label if pending
 	if payload.get('context') == 'Semantic Pull Request':
 		if payload.get('state') == 'pending':
@@ -77,11 +96,16 @@ def remove_label_from_pr(payload, label_name):
 			pr.remove_from_labels(label_name)
 			return
 
-def get_pr_to_modify(payload):
+def get_repo(payload):
 	g = Github(config.get('gh_user'), config.get('gh_pass'))
-	commit_sha = payload.get('commit', {}).get('sha')
-	if not commit_sha: return
-	res = g.search_issues('sha:' + commit_sha)
-	if not res: return
-	pr_no = res[0].number
-	return g.get_repo(payload.get('repository').get('full_name')).get_pull(pr_no)
+	return g.get_repo(payload.get('repository').get('full_name'))
+
+def get_pr_to_modify(payload):
+	pr_no = payload.get('number')
+	if not pr_no:
+		commit_sha = payload.get('commit', {}).get('sha')
+		if not commit_sha: return
+		res = g.search_issues('sha:' + commit_sha)
+		if not res: return
+		pr_no = res[0].number
+	return get_repo(payload).get_pull(pr_no)
