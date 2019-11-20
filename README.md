@@ -5,7 +5,7 @@ A simple Flask app to automatically label GitHub PRs.
 ---
 
 
-### Creating a webhook:
+### Create a GitHub Webhook:
 1. Set Payload URL to your intended server (e.g. `http://123.231.123.231:8000`).
 2. Set Content Type to `application/json`.
 3. Set the secret key to whatever you like (we'll use this later).
@@ -31,7 +31,7 @@ cd tagger
 
 3. Create a virtual enviroment using Python 3:
 ```
-python3 - m venv .venv
+python3 -m venv .venv
 ```
 
 4. Activate virtual environment:
@@ -60,3 +60,10 @@ flask run -h 0.0.0.0 -p 8000 --reload --debugger
 
 1. Follow steps 1 - 6 in the section titled `Setting up a local environment`.
 2. If you choose to use Ubuntu 18.04 LTS, uWSGI and Nginx for your purposes, [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04) is recommended.
+3. Tagger runs as a service, you can use the following commands to check it's status or restart it after an update.
+  
+    ```
+    sudo service tagger status
+
+    sudo service tagger restart
+    ```
