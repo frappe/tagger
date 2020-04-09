@@ -1,6 +1,7 @@
 import hmac, json
 from hashlib import sha1
 from os.path import abspath, normpath, dirname, join
+from urllib.parse import urlparse
 
 from flask import Flask, request, abort
 from github import Github
@@ -24,7 +25,7 @@ def tagger():
 		if title.startswith('feat:') and head_sha:
 			status = 'pending'
 			description = 'Documentation required'
-			if 'Docs Link' in body or 'Documentation Link' in body or 'Documentation PR' in body:
+			if docs_link_exists(body):
 				status = 'success'
 				description = 'Documentation link added'
 			repo.get_commit(head_sha).create_status(
@@ -109,3 +110,19 @@ def get_pr_to_modify(payload):
 		if not res: return
 		pr_no = res[0].number
 	return get_repo(payload).get_pull(pr_no)
+
+def uri_validator(x):
+	result = urlparse(x)
+	return all([result.scheme, result.netloc, result.path])
+
+def docs_link_exists(body):
+	docs_repos = ["erpnext_documentation", "erpnext_com", "frappe_io"]
+
+	for line in body.splitlines():
+		for word in line:
+			if word.startswith('http') and uri_validator(word):
+				parsed_url = urlparse(word)
+				if parsed_url.netloc == "github.com":
+					_, org, repo, _type, ref = parsed_url.path.split('/')
+					if org == "frappe" and repo in docs_repos:
+						return True
