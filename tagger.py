@@ -22,7 +22,7 @@ def tagger():
 		head_sha = payload.get('pull_request', {}).get('head', {}).get('sha', None)
 		title = payload.get('pull_request', {}).get('title', '')
 		body = payload.get('pull_request', {}).get('body', '')
-		if title.startswith('feat') and head_sha:
+		if title.startswith('feat') and head_sha and 'no-docs' not in body:
 			status = 'pending'
 			description = 'Documentation required'
 			if docs_link_exists(body):
